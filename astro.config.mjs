@@ -4,7 +4,7 @@ import icon from 'astro-icon';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://scale.viralideamarketing.com',
+  site: 'https://go.viralideamarketing.com',
   integrations: [icon()],
   vite: {
     plugins: [tailwindcss()],
