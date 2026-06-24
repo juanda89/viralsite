@@ -1,0 +1,42 @@
+---
+import { Icon } from 'astro-icon/components';
+const reasons = [
+  { icon: 'ph:clock-countdown', title: 'Missed deadlines',
+    body: "Launch is tomorrow. The video still isn't ready. You'll be rebuilding the plan tonight." },
+  { icon: 'ph:handshake', title: 'No trusty partner',
+    body: "You've cycled through agencies and editors. Each one started strong. None of them stuck." },
+  { icon: 'ph:fire-simple', title: 'In-house overload',
+    body: "Your team is editing instead of strategizing. You're losing your best people to burnout. The brand suffers either way." },
+  { icon: 'ph:squares-four', title: 'No system',
+    body: "Every video starts from zero. New editor, new brief, new training. You hire more people and never ship more video." },
+];
+---
+<section id="problem" class="mx-auto max-w-[1240px] px-5 py-20 sm:px-8 lg:py-28">
+  <div data-reveal class="max-w-2xl">
+    <h2 class="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.9rem]">
+      <span class="text-violet-bright">4 reasons</span> production keeps breaking your content strategy
+    </h2>
+    <p class="mt-4 text-lg text-muted">And why none of them are your fault.</p>
+  </div>
+
+  <div class="mt-12 grid gap-5 sm:grid-cols-2">
+    {reasons.map((r, i) => (
+      <article
+        data-reveal data-reveal-delay={i % 2}
+        class="group rounded-[var(--radius-card)] border border-line bg-surface p-7 transition
+               hover:border-violet/40 hover:bg-surface2"
+      >
+        <span class="grid h-12 w-12 place-items-center rounded-xl bg-violet/12 ring-1 ring-violet/25">
+          <Icon name={r.icon} class="h-6 w-6 text-violet-bright" />
+        </span>
+        <h3 class="mt-5 font-display text-xl font-semibold tracking-tight">{r.title}</h3>
+        <p class="mt-2 leading-relaxed text-muted">{r.body}</p>
+      </article>
+    ))}
+  </div>
+
+  <p data-reveal class="mt-10 text-balance text-xl font-medium leading-relaxed text-ink sm:text-2xl">
+    All four are <span class="text-violet-bright">system</span> problems.
+    <span class="text-muted">Every time the system breaks, your name is on the line.</span>
+  </p>
+</section>

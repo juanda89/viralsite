@@ -1,0 +1,46 @@
+---
+import { Icon } from 'astro-icon/components';
+const gains = [
+  { icon: 'ph:chart-line-up', title: 'Hit your KPIs',
+    body: 'From 0 up to 1K videos a month, delivered on time. The content volume leadership stopped chasing you for. The number on the report finally moves.' },
+  { icon: 'ph:calendar-check', title: 'Get your Fridays back',
+    body: 'Fast first drafts in your inbox. No more weekend revisions, no more Sunday Slack checks. Your family stops asking why you are on your laptop again.' },
+  { icon: 'ph:shield-check', title: 'Protect your brand',
+    body: 'A senior editor trained on your standards before the first video ships. You stop being the last line of defense against off-brand videos before launch.' },
+  { icon: 'ph:trend-up', title: 'Scale without hiring',
+    body: 'Go from 4 videos a month up to 1K, delivered on time, without adding headcount or another retainer. Your team stops burning out. Your output keeps growing.' },
+];
+---
+<section id="gains" class="mx-auto max-w-[1240px] px-5 py-20 sm:px-8 lg:py-28">
+  <div class="grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:gap-16">
+    <div data-reveal class="lg:sticky lg:top-28 lg:self-start">
+      <h2 class="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.9rem]">
+        What you gain,<br />when trusting us
+      </h2>
+      <p class="mt-4 max-w-sm text-lg text-muted">
+        Not just edited videos. A production system that takes the work, and the worry, off your plate.
+      </p>
+      <a href="#book" data-book
+         class="mt-8 inline-flex items-center gap-2.5 rounded-full bg-gradient-to-b from-violet to-violet-deep
+                px-6 py-3.5 text-[17px] font-semibold text-white shadow-[0_14px_40px_-12px_rgba(105,108,252,0.7)]
+                transition active:translate-y-px">
+        Book your free call
+        <Icon name="ph:arrow-right-bold" class="h-4 w-4" />
+      </a>
+    </div>
+
+    <ul class="divide-y divide-line">
+      {gains.map((g, i) => (
+        <li data-reveal data-reveal-delay={i % 3} class="flex gap-5 py-7 first:pt-0">
+          <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-violet/12 ring-1 ring-violet/25">
+            <Icon name={g.icon} class="h-6 w-6 text-violet-bright" />
+          </span>
+          <div>
+            <h3 class="font-display text-xl font-semibold tracking-tight">{g.title}</h3>
+            <p class="mt-1.5 max-w-xl leading-relaxed text-muted">{g.body}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

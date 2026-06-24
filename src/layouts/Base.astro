@@ -1,0 +1,92 @@
+---
+import '@fontsource-variable/sora';
+import '@fontsource-variable/manrope';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Viral Ideas — Your video team, on a system that ships',
+  description = 'A dedicated video team trained on your brand from day one. Scale content without missed deadlines, freelancer ghosting, or hiring. Book your free call.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline>document.documentElement.dataset.theme = 'dark';</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Meta Pixel (browser-side). Sets _fbp/_fbc cookies that tracking.js reads for CAPI matching.
+         Pixel/dataset: "AI Meta Ads" (1013542134498760), BM Viral Idea Marketing. Fires PageView on every page. -->
+    <script is:inline>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1013542134498760');
+      fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1013542134498760&ev=PageView&noscript=1" alt="" /></noscript>
+  </head>
+  <body class="grain antialiased">
+    <slot />
+
+    <!-- First-touch attribution capture + propagation to booking links -->
+    <script>
+      import '../lib/tracking.js';
+    </script>
+
+    <!-- Scroll reveal -->
+    <script>
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (!mq.matches && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          }
+        }, { threshold: 0.18 });
+        document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+        // count-up for [data-count]
+        const cio = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const el = e.target;
+            const target = parseFloat(el.dataset.count);
+            const dur = 1400; const start = performance.now();
+            const fmt = new Intl.NumberFormat('en-US');
+            function tick(now) {
+              const p = Math.min((now - start) / dur, 1);
+              const eased = 1 - Math.pow(1 - p, 3);
+              el.textContent = fmt.format(Math.round(target * eased));
+              if (p < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+            cio.unobserve(el);
+          }
+        }, { threshold: 0.6 });
+        document.querySelectorAll('[data-count]').forEach((el) => cio.observe(el));
+      } else {
+        document.querySelectorAll('[data-count]').forEach((el) => {
+          el.textContent = new Intl.NumberFormat('en-US').format(parseFloat(el.dataset.count));
+        });
+      }
+    </script>
+  </body>
+</html>

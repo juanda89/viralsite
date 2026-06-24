@@ -1,0 +1,38 @@
+---
+const steps = [
+  { n: '01', title: 'Upload your brief',
+    body: 'Drop your footage, brief, and brand guidelines into your dedicated client portal. Everything in one place, organized by project. No more Slack threads to find the latest asset.' },
+  { n: '02', title: 'Production starts',
+    body: 'Your dedicated editor and managing editor get to work. Same team every video, no new ramp-up, no new brief explanations. First draft back fast.' },
+  { n: '03', title: 'Internal review',
+    body: 'Our QA team checks every video for brand consistency, technical quality, and brief execution. Issues get caught upstream. What lands on your desk is launch-ready.' },
+  { n: '04', title: 'Final delivery',
+    body: 'Polished, on-brand video delivered to your portal, ready for launch. Unlimited revisions until every detail lands. The kind of asset you would ship without checking twice.' },
+];
+---
+<section id="how" class="border-y border-line/60 bg-surface/30">
+  <div class="mx-auto max-w-[1240px] px-5 py-20 sm:px-8 lg:py-28">
+    <div data-reveal class="max-w-2xl">
+      <h2 class="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.9rem]">
+        How it works
+      </h2>
+      <p class="mt-4 text-lg text-muted">Simple. Organized. Scalable.</p>
+    </div>
+
+    <ol class="relative mt-14 space-y-10 border-l border-line pl-8 sm:pl-12">
+      {steps.map((s, i) => (
+        <li data-reveal data-reveal-delay={i % 3} class="relative">
+          <span class="absolute -left-[2.6rem] top-0 grid h-9 w-9 place-items-center rounded-full
+                       border border-line bg-canvas font-display text-sm font-bold text-violet-bright
+                       sm:-left-[3.85rem]">
+            {s.n}
+          </span>
+          <div class="grid gap-1.5 sm:grid-cols-[1fr_1.6fr] sm:gap-8">
+            <h3 class="font-display text-xl font-semibold tracking-tight sm:text-2xl">{s.title}</h3>
+            <p class="max-w-2xl leading-relaxed text-muted">{s.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

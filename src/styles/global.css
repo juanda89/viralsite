@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   Viral Ideas — Design tokens (see DESIGN.md)
+   Theme lock: DARK. Accent lock: violet #696CFC.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  /* Surfaces — deeper + more separation than the flat Figma (#0C0E19 ≈ cards) */
+  --color-canvas: #0B0A12;     /* page background (off-black, violet-tinted) */
+  --color-surface: #141320;    /* elevated card */
+  --color-surface2: #1D1B2D;   /* higher elevation / hover */
+  --color-line: #29263F;       /* hairlines, borders */
+
+  /* Text */
+  --color-ink: #F5F4FB;        /* near-white (no pure #fff) */
+  --color-muted: #A5A2C4;      /* secondary text */
+  --color-faint: #6F6C8F;      /* tertiary / labels */
+
+  /* Accent — brand violet, locked */
+  --color-violet: #696CFC;
+  --color-violet-bright: #9092FF;
+  --color-violet-deep: #5A5DDD;
+
+  /* Type */
+  --font-display: "Sora Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius scale — soft system (locked): cards 20px, controls pill */
+  --radius-card: 20px;
+}
+
+:root {
+  color-scheme: dark;
+  /* decorative, theme-aware */
+  --grid-line: rgba(255, 255, 255, 0.05);
+  --glow-strong: rgba(105, 108, 252, 0.28);
+  --glow-soft: rgba(144, 146, 255, 0.14);
+  --shadow-media: 0 30px 80px -30px rgba(0, 0, 0, 0.85);
+}
+
+/* ── LIGHT THEME (premium, not a plain invert) ───────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-canvas: #F6F6FB;     /* soft cool off-white */
+  --color-surface: #FFFFFF;    /* crisp white cards */
+  --color-surface2: #EFEEF8;   /* subtle violet-gray elevation */
+  --color-line: #E5E3F1;       /* light hairline */
+  --color-ink: #15141F;        /* near-black text */
+  --color-muted: #54526C;
+  --color-faint: #8B89A4;
+  --color-violet: #5B5EF0;     /* CTA bg, pops on white */
+  --color-violet-bright: #5654E6; /* accent text, readable on white */
+  --color-violet-deep: #4A4DD0;
+  --grid-line: rgba(20, 19, 31, 0.05);
+  --glow-strong: rgba(105, 108, 252, 0.15);
+  --glow-soft: rgba(105, 108, 252, 0.08);
+  --shadow-media: 0 28px 70px -34px rgba(50, 40, 110, 0.26);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* theme-aware grid backdrop */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse at top, #000, transparent 70%);
+  mask-image: radial-gradient(ellipse at top, #000, transparent 70%);
+}
+
+/* brand + client logos are white artwork → flip to dark in light mode */
+:root[data-theme="light"] .vi-logo { filter: brightness(0); }
+:root[data-theme="light"] .client-logo { filter: brightness(0) !important; }
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Display type defaults */
+.font-display { font-family: var(--font-display); }
+
+/* Subtle film grain — fixed, pointer-events none, never on scrolling containers */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Scroll reveal (IntersectionObserver toggles .in) */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  [data-reveal].in { opacity: 1; transform: none; }
+  [data-reveal-delay="1"] { transition-delay: 0.08s; }
+  [data-reveal-delay="2"] { transition-delay: 0.16s; }
+  [data-reveal-delay="3"] { transition-delay: 0.24s; }
+
+  /* Hero load-in (staggered) */
+  @keyframes vi-rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .vi-load { opacity: 0; animation: vi-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+}
+
+/* Logo marquee (infinite loop) */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track { animation: vi-marquee 34s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+}
+@keyframes vi-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Reels: native horizontal scroll (user drags/swipes to browse) + JS auto-scroll loop.
+   touch-action default(auto) → horizontal swipe scrolls the reels, vertical swipe scrolls the page. */
+.reels-scroll {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+.reels-scroll::-webkit-scrollbar { display: none; }
+
+/* selection */
+::selection { background: var(--color-violet); color: #fff; }

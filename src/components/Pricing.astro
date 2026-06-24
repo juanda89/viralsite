@@ -1,0 +1,103 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const oneTime = [
+  { name: 'Short-form video', price: '$249', unit: 'one-time · per video', badge: 'Best to try us',
+    features: ['One video up to 90s (Reel, TikTok, Short)', 'Captions, text, stock & visuals', '2 rounds of revisions', '~4 to 5 day turnaround'],
+    cta: 'Start this video', href: 'https://www.viralideamarketing.com/home/pages/pricing', external: true },
+  { name: 'Long-form video', price: '$549', unit: 'one-time · per video',
+    features: ['One video up to 5 minutes', 'YouTube, testimonial or webinar', '2 rounds of revisions', '~7 to 10 day turnaround'],
+    cta: 'Start this video', href: 'https://www.viralideamarketing.com/home/pages/pricing', external: true },
+  { name: 'Custom video', price: 'Custom', unit: 'quote in 24h',
+    features: ["Something outside the packages?", 'Tell us the project', 'Get a quote in 24 hours or less'],
+    cta: 'Book your free call', href: '#book' },
+];
+const monthly = [
+  { name: 'Half-time team', price: '$2,500', unit: 'per month',
+    features: ['20 hrs/week with your dedicated editor', 'Direct contact, Mon–Fri 9–5 EST', 'Every video reviewed before delivery', 'Direct Slack access'],
+    cta: 'Book your free call', href: '#book' },
+  { name: 'Full-time team', price: '$4,760', unit: 'per month', badge: 'Most popular',
+    features: ['40 hrs/week with your dedicated editor', 'Same-day first drafts & revisions', '1-hour response in business hours', 'Creative Control QA + direct Slack'],
+    cta: 'Book your free call', href: '#book' },
+  { name: 'Full-time team +', price: 'Custom', unit: 'enterprise',
+    features: ['More than 40 hrs/week', 'Scalable across multiple brands', 'Tailored to your workflow'],
+    cta: 'Book your free call', href: '#book' },
+];
+---
+<section id="pricing" class="mx-auto max-w-[1240px] px-5 py-20 sm:px-8 lg:py-24">
+  <div data-reveal class="mx-auto max-w-2xl text-center">
+    <h2 class="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.9rem]">
+      You don't need an <span class="text-violet-bright">enterprise budget</span>
+    </h2>
+    <p class="mt-4 text-lg text-muted">
+      Start with a single video, or bring on a dedicated team. Pick what fits today, scale when you're ready.
+    </p>
+
+    <!-- toggle -->
+    <div class="mt-8 inline-flex rounded-full border border-line bg-surface p-1" role="tablist">
+      <button type="button" data-plan-tab="onetime" aria-pressed="true"
+        class="rounded-full px-5 py-2 text-[15px] font-semibold text-muted transition
+               aria-pressed:bg-gradient-to-b aria-pressed:from-violet aria-pressed:to-violet-deep aria-pressed:text-white">
+        One-time
+      </button>
+      <button type="button" data-plan-tab="monthly" aria-pressed="false"
+        class="rounded-full px-5 py-2 text-[15px] font-semibold text-muted transition
+               aria-pressed:bg-gradient-to-b aria-pressed:from-violet aria-pressed:to-violet-deep aria-pressed:text-white">
+        Monthly
+      </button>
+    </div>
+  </div>
+
+  {[{ key: 'onetime', plans: oneTime }, { key: 'monthly', plans: monthly }].map((group) => (
+    <div data-plan-view={group.key} hidden={group.key !== 'onetime'} class="mt-12 grid gap-5 lg:grid-cols-3">
+      {group.plans.map((p, i) => {
+        const featured = !!p.badge;
+        return (
+          <article data-reveal data-reveal-delay={i}
+            class={`relative flex flex-col rounded-[var(--radius-card)] border p-7 ${featured
+              ? 'border-violet/50 bg-gradient-to-b from-violet/12 to-surface shadow-[var(--shadow-media)]'
+              : 'border-line bg-surface'}`}>
+            {p.badge && (
+              <span class="absolute right-5 top-6 rounded-full bg-violet px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white">{p.badge}</span>
+            )}
+            <h3 class="font-display text-lg font-semibold tracking-tight">{p.name}</h3>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="font-display text-4xl font-bold tracking-tight text-ink">{p.price}</span>
+              <span class="text-sm text-muted">{p.unit}</span>
+            </div>
+            <ul class="mt-6 space-y-3 border-t border-line pt-6">
+              {p.features.map((f) => (
+                <li class={`flex items-start gap-2.5 text-[15px] ${featured ? 'text-ink/90' : 'text-muted'}`}>
+                  <Icon name="ph:check-bold" class="mt-0.5 h-4 w-4 shrink-0 text-violet-bright" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <a href={p.href} data-book={p.href === '#book' ? '' : undefined}
+               target={p.external ? '_blank' : undefined} rel={p.external ? 'noopener' : undefined}
+               class={`mt-7 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[15px] font-semibold transition ${featured
+                 ? 'bg-gradient-to-b from-violet to-violet-deep text-white shadow-[0_12px_34px_-12px_rgba(105,108,252,0.7)] active:translate-y-px'
+                 : 'border border-line text-ink hover:border-violet/60 hover:bg-surface2'}`}>
+              {p.cta}
+              <Icon name={p.external ? 'ph:arrow-up-right' : 'ph:arrow-right-bold'} class="h-4 w-4" />
+            </a>
+          </article>
+        );
+      })}
+    </div>
+  ))}
+
+  <p data-reveal class="mt-8 text-center text-sm text-faint">
+    Bonus: <span class="text-muted">30% off your first month</span> of any monthly plan when you start within 30 days of a one-time order.
+  </p>
+</section>
+
+<script>
+  const tabs = document.querySelectorAll('[data-plan-tab]');
+  const views = document.querySelectorAll('[data-plan-view]');
+  tabs.forEach((b) => b.addEventListener('click', () => {
+    const v = b.getAttribute('data-plan-tab');
+    tabs.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    views.forEach((view) => { view.hidden = view.getAttribute('data-plan-view') !== v; });
+  }));
+</script>

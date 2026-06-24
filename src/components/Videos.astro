@@ -1,0 +1,105 @@
+---
+import { Icon } from 'astro-icon/components';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Auto-list reels from the public folders (newly downloaded reels appear without code edits).
+function listReels(rel, urlBase) {
+  const abs = path.join(process.cwd(), 'public', rel);
+  if (!fs.existsSync(abs)) return [];
+  return fs.readdirSync(abs)
+    .filter((f) => f.endsWith('.mp4'))
+    .map((f) => {
+      const id = f.slice(0, -4);
+      const posterFs = path.join(abs, id + '.jpg');
+      return { src: `${urlBase}/${f}`, poster: fs.existsSync(posterFs) ? `${urlBase}/${id}.jpg` : undefined };
+    });
+}
+const reels = [...listReels('media/reels', '/media/reels'), ...listReels('media/reels-bbm', '/media/reels-bbm')];
+const loop = [...reels, ...reels]; // duplicated for a seamless infinite scroll
+---
+<section id="work" class="overflow-hidden py-16 lg:py-20">
+  <div class="mx-auto max-w-[1240px] px-5 sm:px-8">
+    <div data-reveal class="flex flex-wrap items-end justify-between gap-4">
+      <h2 class="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.9rem]">
+        The work, <span class="text-violet-bright">not the promises</span>
+      </h2>
+      <p class="text-lg text-muted">Scroll through, hover or tap any to listen.</p>
+    </div>
+  </div>
+
+  <div data-reveal data-vreel-wrap class="reels-scroll mt-10">
+    {loop.map((r) => (
+      <article class="vreel relative mr-4 aspect-[9/16] w-[176px] shrink-0 cursor-pointer overflow-hidden
+                      rounded-2xl border border-line bg-surface sm:w-[200px]">
+        <video src={r.src} poster={r.poster} autoplay muted loop playsinline preload="metadata"
+               class="pointer-events-none h-full w-full bg-black object-cover"></video>
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-canvas/35 to-transparent"></div>
+        <span class="pointer-events-none absolute right-2.5 top-2.5 grid h-7 w-7 place-items-center rounded-full
+                     bg-canvas/70 text-ink backdrop-blur">
+          <Icon name="ph:speaker-simple-slash-fill" data-mon class="h-3.5 w-3.5" />
+          <Icon name="ph:speaker-simple-high-fill" data-moff class="hidden h-3.5 w-3.5 text-violet-bright" />
+        </span>
+      </article>
+    ))}
+  </div>
+</section>
+
+<script>
+  const wrap = document.querySelector('[data-vreel-wrap]');
+  if (wrap) {
+    const cards = Array.from(wrap.querySelectorAll('.vreel'));
+    const vidOf = (c) => c.querySelector('video');
+    function icon(card) {
+      const v = vidOf(card);
+      card.querySelector('[data-mon]')?.classList.toggle('hidden', !v.muted);
+      card.querySelector('[data-moff]')?.classList.toggle('hidden', v.muted);
+    }
+    // unmute one card (mute the rest)
+    function solo(card) {
+      cards.forEach((c) => {
+        const v = vidOf(c);
+        v.muted = c !== card;
+        if (c === card) v.play().catch(() => {});
+        icon(c);
+      });
+    }
+    cards.forEach((card) => {
+      const v = vidOf(card);
+      card.addEventListener('mouseenter', () => solo(card));
+      card.addEventListener('mouseleave', () => { v.muted = true; icon(card); });
+      card.addEventListener('click', () => { if (v.muted) solo(card); else { v.muted = true; icon(card); } });
+    });
+
+    // autoplay muted only while in view (perf)
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          const v = e.target;
+          if (e.isIntersecting) v.play().catch(() => {});
+          else { v.pause(); v.muted = true; icon(v.closest('.vreel')); }
+        }
+      }, { threshold: 0.25, root: wrap });
+      cards.forEach((c) => io.observe(vidOf(c)));
+    }
+
+    // gentle auto-scroll loop; pauses while the user hovers / drags / swipes, then resumes
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let paused = false, idle;
+    const SPEED = 0.45;
+    const resumeSoon = () => { clearTimeout(idle); idle = setTimeout(() => { paused = false; }, 1000); };
+    ['mouseenter', 'pointerdown', 'touchstart'].forEach((ev) =>
+      wrap.addEventListener(ev, () => { paused = true; clearTimeout(idle); }, { passive: true }));
+    ['mouseleave', 'pointerup', 'touchend'].forEach((ev) =>
+      wrap.addEventListener(ev, resumeSoon, { passive: true }));
+    wrap.addEventListener('wheel', () => { paused = true; resumeSoon(); }, { passive: true });
+
+    function tick() {
+      if (!paused) wrap.scrollLeft += SPEED;
+      const half = wrap.scrollWidth / 2;
+      if (half > 0 && wrap.scrollLeft >= half) wrap.scrollLeft -= half; // seamless loop (content is duplicated)
+      requestAnimationFrame(tick);
+    }
+    if (!reduce) requestAnimationFrame(tick);
+  }
+</script>

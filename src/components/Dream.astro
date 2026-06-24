@@ -1,0 +1,39 @@
+---
+import { Icon } from 'astro-icon/components';
+const outcomes = ['The brand stays consistent', 'The KPIs hit', 'Your weekends stay yours'];
+---
+<section id="dream" class="relative isolate overflow-hidden border-y border-line/60 bg-surface/30">
+  <div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-0 -z-10 h-[440px] w-[900px]
+              -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,var(--glow-strong),transparent_65%)] blur-2xl"></div>
+
+  <div class="mx-auto grid max-w-[1240px] items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:py-28">
+    <div data-reveal>
+      <h2 class="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.9rem]">
+        Imagine running marketing
+        <span class="block text-violet-bright">instead of chasing it</span>
+      </h2>
+      <ul class="mt-8 space-y-3">
+        {outcomes.map((o) => (
+          <li class="flex items-center gap-3 text-lg text-ink">
+            <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-violet/15 ring-1 ring-violet/30">
+              <Icon name="ph:check-bold" class="h-4 w-4 text-violet-bright" />
+            </span>
+            {o}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <figure data-reveal data-reveal-delay="1"
+            class="relative rounded-[var(--radius-card)] border border-line bg-canvas/60 p-8 sm:p-10">
+      <span class="absolute left-0 top-8 h-[calc(100%-4rem)] w-1 rounded-full bg-gradient-to-b from-violet to-transparent"></span>
+      <Icon name="ph:quotes-fill" class="h-9 w-9 text-violet/40" />
+      <blockquote class="mt-4 text-pretty text-xl leading-relaxed text-ink/90 sm:text-2xl sm:leading-relaxed">
+        It's Tuesday afternoon. You haven't checked Slack in 3 hours because you're building strategy.
+        The week's videos are already in review. Paid social got their creative Monday. The brand stays
+        consistent because the same senior editor has handled every asset since you onboarded.
+        <span class="text-violet-bright"> You haven't apologized for a missed deadline since.</span>
+      </blockquote>
+    </figure>
+  </div>
+</section>

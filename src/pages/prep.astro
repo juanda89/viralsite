@@ -1,0 +1,194 @@
+---
+import Base from '../layouts/Base.astro';
+import { Icon } from 'astro-icon/components';
+
+// Post-booking intake. The HighLevel calendar should redirect here after a booking.
+// On submit we POST the answers to the n8n webhook "VI-CAPI Lead", which upserts the SAME
+// GHL contact (matched by email) with these custom fields + fires the Lead CAPI event. See PREP-SETUP.md.
+const PREP_WEBHOOK = 'https://n8n-execute-viralbbm-u44048.vm.elestio.app/webhook/vi-capi-lead';
+
+const questions = [
+  { key: 'bottleneck', q: "What's slowing your video output down most?",
+    options: [
+      { v: 'freelancers', label: 'Freelancers ghosting or inconsistent quality' },
+      { v: 'agency', label: 'Agency too slow or expensive' },
+      { v: 'inhouse', label: 'In-house team at capacity' },
+      { v: 'nosystem', label: 'No system, everything ad hoc' },
+      { v: 'other', label: 'Something else' },
+    ] },
+  { key: 'volume', q: 'How many videos a month do you need?',
+    options: [{ v: 'v0', label: '1 to 10' }, { v: 'v1', label: '10 to 30' }, { v: 'v2', label: '30 to 100' }, { v: 'v3', label: '100+' }] },
+  { key: 'budget', q: "What's your monthly budget for video?",
+    options: [{ v: 'b0', label: 'Under $1k' }, { v: 'b1', label: '$1k to $2.5k' }, { v: 'b2', label: '$2.5k to $5k' }, { v: 'b3', label: '$5k+' }] },
+  { key: 'role', q: "What's your role?",
+    options: [{ v: 'founder', label: 'Founder / CEO' }, { v: 'marketing', label: 'Head of Marketing / CMO' }, { v: 'agency', label: 'Agency owner' }, { v: 'other', label: 'Other' }] },
+  { key: 'content', q: 'What content matters most right now?',
+    options: [{ v: 'short', label: 'Short-form (Reels, TikTok, Shorts)' }, { v: 'long', label: 'Long-form & YouTube' }, { v: 'ads', label: 'Paid ads' }, { v: 'mix', label: 'A mix' }] },
+  { key: 'timeline', q: 'When do you want to start?',
+    options: [{ v: 'asap', label: 'ASAP' }, { v: 'month', label: 'This month' }, { v: 'quarter', label: 'This quarter' }, { v: 'explore', label: 'Just exploring' }] },
+  { key: 'readiness', q: 'Footage and a content cadence ready?',
+    options: [{ v: 'yes', label: 'Yes, regularly' }, { v: 'sometimes', label: 'Sometimes' }, { v: 'no', label: 'Not yet' }] },
+];
+const total = questions.length;
+---
+<Base title="Before your call — Viral Ideas">
+  <header class="mx-auto flex h-16 max-w-3xl items-center px-5 sm:px-8">
+    <a href="/" aria-label="Viral Ideas home"><img src="/media/vi-logo.png" alt="Viral Ideas" class="vi-logo h-6 w-auto" /></a>
+  </header>
+
+  <main class="mx-auto max-w-3xl px-5 pb-24 pt-6 sm:px-8">
+    <div data-reveal class="in text-center">
+      <span class="inline-flex items-center gap-2 rounded-full border border-violet/40 bg-violet/12 px-3 py-1 text-[13px] text-violet-bright">
+        <Icon name="ph:check-circle-fill" class="h-4 w-4" /> Your call is booked
+      </span>
+      <h1 class="mt-5 font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
+        One last step, so the call is <span class="text-violet-bright">actually worth it</span>
+      </h1>
+      <p class="mt-4 text-lg text-muted">Tell us where you're at and we'll come prepared for you. Takes 30 seconds.</p>
+    </div>
+
+    <form data-prep class="mt-10 rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-9" novalidate>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block">
+          <span class="mb-1.5 block text-sm font-medium text-muted">Your name</span>
+          <input name="name" type="text" autocomplete="name"
+            class="w-full rounded-xl border border-line bg-canvas/50 px-4 py-3 text-ink outline-none transition placeholder:text-faint focus:border-violet/60" placeholder="Jane Rivera" />
+        </label>
+        <label class="block">
+          <span class="mb-1.5 block text-sm font-medium text-muted">Email (the one you booked with)</span>
+          <input name="email" type="email" required autocomplete="email"
+            class="w-full rounded-xl border border-line bg-canvas/50 px-4 py-3 text-ink outline-none transition placeholder:text-faint focus:border-violet/60" placeholder="jane@company.com" />
+        </label>
+      </div>
+
+      <div class="mt-8 space-y-8">
+        {questions.map((item, i) => (
+          <fieldset data-q data-key={item.key}>
+            <legend class="flex items-baseline gap-2 font-display text-lg font-semibold tracking-tight">
+              <span class="text-sm font-bold text-violet-bright">{String(i + 1).padStart(2, '0')}</span>
+              {item.q}
+            </legend>
+            <div class="mt-3 flex flex-wrap gap-2.5">
+              {item.options.map((o) => (
+                <button type="button" data-opt data-value={o.v} aria-pressed="false"
+                  class="rounded-full border border-line bg-canvas/50 px-4 py-2.5 text-[15px] text-ink/90 transition
+                         hover:border-violet/50 hover:text-ink
+                         aria-pressed:border-violet aria-pressed:bg-violet/15 aria-pressed:text-ink">{o.label}</button>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </div>
+
+      <div class="mt-9 flex flex-col items-center gap-3 border-t border-line pt-7 sm:flex-row sm:justify-between">
+        <span class="text-sm text-faint"><span data-answered>0</span> of {total} answered</span>
+        <button type="submit" data-submit disabled
+          class="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-b from-violet to-violet-deep
+                 px-7 py-3.5 text-[17px] font-semibold text-white shadow-[0_14px_40px_-12px_rgba(105,108,252,0.7)]
+                 transition active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">
+          Send and lock it in
+          <Icon name="ph:arrow-right-bold" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </button>
+      </div>
+    </form>
+
+    <div data-prep-done hidden class="mt-10 rounded-[var(--radius-card)] border border-violet/40 bg-surface p-8 text-center sm:p-10">
+      <span class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-violet/15 ring-1 ring-violet/30">
+        <Icon name="ph:check-bold" class="h-7 w-7 text-violet-bright" />
+      </span>
+      <h2 class="mt-5 font-display text-2xl font-bold tracking-tight">You're all set</h2>
+      <p class="mx-auto mt-3 max-w-md leading-relaxed text-muted">Thanks. We'll review your answers and come ready for the call. See you soon.</p>
+      <a href="/" class="mt-7 inline-flex items-center gap-2 text-[15px] font-medium text-violet-bright transition hover:text-ink">
+        Back to home <Icon name="ph:arrow-right-bold" class="h-4 w-4" />
+      </a>
+    </div>
+  </main>
+</Base>
+
+<script define:vars={{ PREP_WEBHOOK }}>
+  const form = document.querySelector('[data-prep]');
+  if (form) {
+    const params = new URLSearchParams(location.search);
+    const nameI = form.querySelector('[name="name"]');
+    const emailI = form.querySelector('[name="email"]');
+    // prefill from the redirect (GHL can append ?name=&email=)
+    if (params.get('name')) nameI.value = params.get('name');
+    if (params.get('email')) emailI.value = params.get('email');
+
+    const fields = Array.from(form.querySelectorAll('[data-q]'));
+    const submit = form.querySelector('[data-submit]');
+    const counter = form.querySelector('[data-answered]');
+    const done = document.querySelector('[data-prep-done]');
+    const answers = {};
+
+    const qualified = () =>
+      ['v1', 'v2', 'v3'].includes(answers.volume) &&
+      ['b2', 'b3'].includes(answers.budget) &&
+      answers.timeline !== 'explore';
+
+    function refresh() {
+      counter.textContent = String(Object.keys(answers).length);
+      submit.disabled = Object.keys(answers).length < fields.length || !emailI.value.trim();
+    }
+    emailI.addEventListener('input', refresh);
+
+    fields.forEach((fs) => {
+      const key = fs.dataset.key;
+      fs.querySelectorAll('[data-opt]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          fs.querySelectorAll('[data-opt]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+          btn.setAttribute('aria-pressed', 'true');
+          answers[key] = btn.dataset.value;
+          refresh();
+        });
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (submit.disabled) return;
+      // Meta attribution for CAPI matching: read first-touch from localStorage
+      // (set on the landing by tracking.js), and let the GHL redirect override/add via query string.
+      let attr = {};
+      try { attr = JSON.parse(localStorage.getItem('vi_attr') || '{}'); } catch (err) {}
+      ['fbclid', '_fbc', '_fbp', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid'].forEach((k) => {
+        const v = params.get(k);
+        if (v) attr[k] = v;
+      });
+      // Prefer the REAL first-party cookies the Meta Pixel set (best match quality);
+      // by submit time fbevents.js has loaded. Fall back to the stored/synth value.
+      const cookie = (n) => { const m = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)'); return m ? m.pop() : ''; };
+      const realFbc = cookie('_fbc');
+      const realFbp = cookie('_fbp');
+
+      const payload = {
+        name: nameI.value.trim(),
+        email: emailI.value.trim(),
+        contact_id: params.get('contact_id') || '',
+        qualified: qualified(),
+        ...answers,
+        // attribution → GHL custom fields → consumed by the offline "Qualified" CAPI event
+        fbclid: attr.fbclid || '',
+        fbc: realFbc || attr._fbc || attr.fbc || '',
+        fbp: realFbp || attr._fbp || attr.fbp || '',
+        utm_source: attr.utm_source || '',
+        utm_medium: attr.utm_medium || '',
+        utm_campaign: attr.utm_campaign || '',
+        utm_content: attr.utm_content || '',
+        utm_term: attr.utm_term || '',
+        gclid: attr.gclid || '',
+        source: 'prep-form',
+      };
+      try { localStorage.setItem('vi_quiz', JSON.stringify(payload)); } catch (err) {}
+      if (PREP_WEBHOOK) {
+        try {
+          await fetch(PREP_WEBHOOK, { method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+        } catch (err) { /* no-cors: opaque, ignore */ }
+      }
+      form.hidden = true;
+      done.hidden = false;
+      done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+</script>

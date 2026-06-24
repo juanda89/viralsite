@@ -1,0 +1,51 @@
+---
+import { Icon } from 'astro-icon/components';
+const reassurances = [
+  { icon: 'ph:clock', text: '30 minutes, no obligation' },
+  { icon: 'ph:chat-circle-slash', text: 'A diagnosis, not a sales pitch' },
+  { icon: 'ph:calendar-x', text: 'Month to month, cancel anytime' },
+];
+---
+<section id="book" class="relative isolate overflow-hidden">
+  <div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-0 -z-10 h-[460px] w-[1000px]
+              -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,var(--glow-strong),transparent_64%)] blur-2xl"></div>
+
+  <div class="mx-auto max-w-[1240px] px-5 py-20 sm:px-8 lg:py-28">
+    <div class="grid items-start gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
+      <div data-reveal>
+        <h2 class="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[3rem]">
+          Book your free<br /><span class="text-violet-bright">strategy call</span>
+        </h2>
+        <p class="mt-5 max-w-md text-lg leading-relaxed text-muted">
+          We onboard a limited number of new clients each month to protect quality. Grab a time and we will map
+          your content system, live.
+        </p>
+        <ul class="mt-8 space-y-3">
+          {reassurances.map((r) => (
+            <li class="flex items-center gap-3 text-ink">
+              <span class="grid h-8 w-8 place-items-center rounded-full bg-violet/12 ring-1 ring-violet/25">
+                <Icon name={r.icon} class="h-4 w-4 text-violet-bright" />
+              </span>
+              {r.text}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div data-reveal data-reveal-delay="1"
+           class="overflow-hidden rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-media)]">
+        <!-- HighLevel booking widget. tracking.js appends fbclid/utm to the src for Meta attribution (CAPI Schedule filter). -->
+        <iframe
+          src="https://api.leadconnectorhq.com/widget/booking/sLUjBo9IoxmvKiRB0WMV"
+          id="sLUjBo9IoxmvKiRB0WMV_vi"
+          title="Book your free strategy call"
+          scrolling="no"
+          class="h-[700px] w-full border-0"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HighLevel iframe auto-resize -->
+<script src="https://link.msgsndr.com/js/form_embed.js" is:inline></script>

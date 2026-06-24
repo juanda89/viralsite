@@ -1,0 +1,53 @@
+---
+// Trust + proof strip. Real client logos (white PNGs). Framing is deliberately
+// inclusive: big names are aspirational, but the system serves medium businesses too.
+const logos = [
+  { src: '/media/logos/ebay.png', alt: 'eBay' },
+  { src: '/media/logos/logitech.png', alt: 'Logitech' },
+  { src: '/media/logos/pg.png', alt: 'P&G' },
+  { src: '/media/logos/chevrolet.png', alt: 'Chevrolet' },
+  { src: '/media/logos/johnson.png', alt: 'Johnson & Johnson' },
+  { src: '/media/logos/mckesson.png', alt: 'McKesson' },
+  { src: '/media/logos/david-protein.png', alt: 'David Protein' },
+  { src: '/media/logos/cleverdigital.png', alt: 'Clever Digital' },
+];
+const stats = [
+  { value: 100000, suffix: '+', label: 'Videos edited' },
+  { value: 92, suffix: '+', label: 'Team members worldwide' },
+  { value: 10, suffix: '+', label: 'Years of production' },
+];
+---
+<section class="relative border-y border-line/60 bg-surface/30">
+  <div class="mx-auto max-w-[1240px] px-5 py-14 sm:px-8 lg:py-16">
+    <!-- Logo wall -->
+    <p data-reveal class="text-center text-[13px] font-medium uppercase tracking-[0.18em] text-faint">
+      Trusted by founders, agencies, and brands like
+    </p>
+    <div data-reveal data-reveal-delay="1" class="marquee mt-8">
+      <div class="marquee-track">
+        {[...logos, ...logos].map((l, i) => (
+          <img src={l.src} alt={i < logos.length ? l.alt : ''} aria-hidden={i >= logos.length}
+               class="client-logo mr-12 h-12 w-auto max-w-[160px] shrink-0 object-contain opacity-60 grayscale
+                      transition duration-300 hover:opacity-100 sm:mr-20 sm:h-16 sm:max-w-[210px] lg:h-[72px]" />
+        ))}
+      </div>
+    </div>
+    <p data-reveal data-reveal-delay="2" class="mx-auto mt-7 max-w-2xl text-balance text-center text-muted">
+      Big names, yes. But the same system serves a founder shipping their
+      <span class="text-ink"> first 10 videos a month</span>. You don't need an enterprise budget to start.
+    </p>
+
+    <!-- Stats -->
+    <div class="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-[var(--radius-card)]
+                border border-line/70 bg-line/40 sm:grid-cols-3">
+      {stats.map((s, i) => (
+        <div data-reveal data-reveal-delay={i} class="bg-canvas px-6 py-9 text-center">
+          <div class="font-display text-4xl font-bold tracking-tight text-ink sm:text-5xl">
+            <span data-count={s.value}>0</span><span class="text-violet-bright">{s.suffix}</span>
+          </div>
+          <div class="mt-2 text-sm text-muted">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
