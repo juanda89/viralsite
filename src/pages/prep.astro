@@ -111,9 +111,10 @@ const total = questions.length;
     const params = new URLSearchParams(location.search);
     const nameI = form.querySelector('[name="name"]');
     const emailI = form.querySelector('[name="email"]');
-    // prefill from the redirect (GHL can append ?name=&email=)
-    if (params.get('name')) nameI.value = params.get('name');
-    if (params.get('email')) emailI.value = params.get('email');
+    // prefill from the redirect (GHL can append ?name=&email=); ignore unfilled {{merge}} tokens
+    const qp = (k) => { const v = params.get(k); return (v && !v.includes('{{')) ? v : ''; };
+    if (qp('name')) nameI.value = qp('name');
+    if (qp('email')) emailI.value = qp('email');
 
     const fields = Array.from(form.querySelectorAll('[data-q]'));
     const submit = form.querySelector('[data-submit]');
@@ -152,7 +153,7 @@ const total = questions.length;
       let attr = {};
       try { attr = JSON.parse(localStorage.getItem('vi_attr') || '{}'); } catch (err) {}
       ['fbclid', '_fbc', '_fbp', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid'].forEach((k) => {
-        const v = params.get(k);
+        const v = qp(k);
         if (v) attr[k] = v;
       });
       // Prefer the REAL first-party cookies the Meta Pixel set (best match quality);
@@ -164,7 +165,7 @@ const total = questions.length;
       const payload = {
         name: nameI.value.trim(),
         email: emailI.value.trim(),
-        contact_id: params.get('contact_id') || '',
+        contact_id: qp('contact_id'),
         qualified: qualified(),
         ...answers,
         // attribution → GHL custom fields → consumed by the offline "Qualified" CAPI event
