@@ -27,6 +27,23 @@ const {
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    <!-- First-touch fbclid/utm capture — MUST run BEFORE the Meta Pixel, because fbevents.js strips
+         fbclid from the URL on load. Synthesizes _fbc so CAPI match works even if the pixel cookie is blocked. -->
+    <script is:inline>
+      (function(){
+        try{
+          var p = new URLSearchParams(location.search);
+          var store = {};
+          try{ store = JSON.parse(localStorage.getItem('vi_attr')||'{}'); }catch(e){}
+          ['fbclid','utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid'].forEach(function(k){
+            var v = p.get(k); if (v && !store[k]) store[k] = v;
+          });
+          if (!store._fbc && store.fbclid) store._fbc = 'fb.1.'+Date.now()+'.'+store.fbclid;
+          localStorage.setItem('vi_attr', JSON.stringify(store));
+        }catch(e){}
+      })();
+    </script>
+
     <!-- Meta Pixel (browser-side). Sets _fbp/_fbc cookies that tracking.js reads for CAPI matching.
          Pixel/dataset: "AI Meta Ads" (1013542134498760), BM Viral Idea Marketing. Fires PageView on every page. -->
     <script is:inline>
